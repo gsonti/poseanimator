@@ -29,18 +29,20 @@ import {PoseIllustration} from './illustrationGen/illustration';
 import {Skeleton, facePartName2Index} from './illustrationGen/skeleton';
 import {FileUtils} from './utils/fileUtils';
 
-import * as girlSVG from './resources/illustration/girl.svg';
-import * as boySVG from './resources/illustration/boy.svg';
-import * as abstractSVG from './resources/illustration/abstract.svg';
-import * as blathersSVG from './resources/illustration/blathers.svg';
-import * as tomNookSVG from './resources/illustration/tom-nook.svg';
-import * as elephantSVG from './resources/illustration/elephant.svg';
+// SVGs
 import * as amoebaSVG from './resources/illustration/amoeba.svg';
-import * as treeSVG from './resources/illustration/tree.svg';
-import * as tree2SVG from './resources/illustration/tree2.svg';
-import * as birdmanSVG from './resources/illustration/birdman.svg';
+import * as birdSVG from './resources/illustration/bird.svg';
+import * as elephantSVG from './resources/illustration/elephant.svg';
+import * as fishSVG from './resources/illustration/fish.svg';
+import * as frogSVG from './resources/illustration/frog.svg';
 import * as mushroomSVG from './resources/illustration/mushroom.svg';
+import * as pantherSVG from './resources/illustration/panther.svg';
+import * as penguinSVG from './resources/illustration/penguin.svg';
+import * as toadSVG from './resources/illustration/toad.svg';
+import * as treeSVG from './resources/illustration/tree.svg';
 
+// Music
+import * as birdMusic from './resources/music/bird.mp3';
 
 
 // Camera stream video element
@@ -66,19 +68,33 @@ let nmsRadius = 30.0;
 let mobile = false;
 const stats = new Stats();
 const avatarSvgs = {
-  'girl': girlSVG.default,
-  'boy': boySVG.default,
-  'abstract': abstractSVG.default,
-  'blathers': blathersSVG.default,
-  'tom-nook': tomNookSVG.default,
-  'elephant': elephantSVG.default,
   'amoeba': amoebaSVG.default,
+  'bird': birdSVG.default,
+  'elephant': elephantSVG.default,
+  'fish': fishSVG.default,
+  'frog': frogSVG.default,
+  'mushroom': mushroomSVG.default,
+  'panther': pantherSVG.default,
+  'penguin' : penguinSVG.default,
+  'toad': toadSVG.default,
   'tree': treeSVG.default,
-  'tree2': tree2SVG.default,
-  'birdman': birdmanSVG.default,
-  'mushroom': mushroomSVG,
+  
 };
 
+let svgItems = [];
+
+let audio = new Audio(birdMusic);
+// let audio = document.getElementById(birdMusic)
+
+function getRandomInt(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function playAudio() {
+  audio.play();
+}
 /**
  * Loads a the camera to be used in the demo
  *
@@ -301,9 +317,15 @@ export async function bindPage() {
     throw e;
   }
 
-  setupGui([], posenet);
-  setupFPS();
+  // setupGui([], posenet);
+  // setupFPS();
   
+  // svgItems = Object.keys(avatarSvgs);
+  // parseSVG(avatarSvgs[1]);
+  let randomSVGSel = getRandomInt(0, Object.values(avatarSvgs).length);
+  console.log(randomSVGSel);
+  parseSVG(Object.values(avatarSvgs)[randomSVGSel]);
+  console.log("gautam Testing", avatarSvgs);
   toggleLoadingUI(false);
   detectPoseInRealTime(video, posenet);
 }
@@ -313,10 +335,13 @@ navigator.getUserMedia = navigator.getUserMedia ||
 FileUtils.setDragDropHandler((result) => {parseSVG(result)});
 
 async function parseSVG(target) {
+  
+  console.log(target)
   let svgScope = await SVGUtils.importSVG(target /* SVG string or file path */);
   let skeleton = new Skeleton(svgScope);
   illustration = new PoseIllustration(canvasScope);
   illustration.bindSkeleton(skeleton, svgScope);
+  // playAudio();
 }
     
 bindPage();
